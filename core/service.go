@@ -23,7 +23,7 @@ func NewTask(id int, title string) entity.Task {
 	return entity.Task{
 		ID:        id,
 		Title:     title,
-		Status:    entity.StatusTodo,
+		Status:    entity.Todo,
 		CreatedAt: time.Now(),
 	}
 }

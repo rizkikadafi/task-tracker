@@ -14,6 +14,15 @@ type StoreBackedService struct {
 	lastID int
 }
 
+func isValidStatus(s string) bool {
+	switch s {
+	case "todo", "in-progress", "done":
+		return true
+	default:
+		return false
+	}
+}
+
 // Factory function
 func NewStoreService(s store.TaskStore) (*StoreBackedService, error) {
 	tasks, err := s.LoadTasks()
@@ -51,6 +60,17 @@ func (s *StoreBackedService) ListTasks() []entity.Task {
 	return s.tasks
 }
 
+func (s *StoreBackedService) ListTasksByStatus(status entity.Status) ([]entity.Task, error) {
+	filtered := []entity.Task{}
+	for _, task := range s.tasks {
+		if task.Status == status {
+			filtered = append(filtered, task)
+		}
+	}
+
+	return filtered, nil
+}
+
 func (s *StoreBackedService) UpdateStatus(id int, status entity.Status) error {
 	found := false
 	for i, t := range s.tasks {
@@ -86,4 +106,3 @@ func (s *StoreBackedService) DeleteTask(id int) error {
 	s.tasks = append(s.tasks[:idx], s.tasks[idx+1:]...)
 	return s.store.SaveTasks(s.tasks)
 }
-
